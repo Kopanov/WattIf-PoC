@@ -18,6 +18,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 from streamlit_folium import st_folium
 
+from whatif import __version__
 from whatif.adapters.data_open import EU_LOCATIONS, build_assets
 from whatif.adapters.publisher_saref import publish_to_disk, to_jsonld, validate
 from whatif.core.catalogue import (
@@ -590,5 +591,6 @@ with _r3:
         )
 
 st.divider()
-st.caption("PoC for ODEON (Horizon Europe, GA No. 101136128). Open-source EU data today; ODEON "
-           "Energy Data Space + AI artefacts in production. Descriptive only — no recommendations.")
+st.caption(f"WattIf v{__version__} · PoC for ODEON (Horizon Europe, GA No. 101136128). "
+           "Open-source EU data today; ODEON Energy Data Space + AI artefacts in production. "
+           "Descriptive only — no recommendations.")

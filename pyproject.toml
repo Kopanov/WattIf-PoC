@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "whatif-demo"
-version = "0.1.0"
+version = "2026.6.3"   # CalVer (YYYY.M.D) — keep in sync with src/whatif/__init__.py
 description = "WattIf — descriptive-only what-if scenario simulator for residential prosumers (ODEON Open Call #1, Challenge 10 PoC)"
 readme = "README.md"
 requires-python = ">=3.9"

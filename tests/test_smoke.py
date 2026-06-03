@@ -2,6 +2,8 @@
 the adapter contracts exist, and the schema validates its inputs."""
 from __future__ import annotations
 
+import re
+
 import pandas as pd
 import pytest
 
@@ -12,7 +14,7 @@ from whatif.core.schema import Indicators, Scenario, Tariff
 
 
 def test_package_imports():
-    assert whatif.__version__ == "0.1.0"
+    assert re.match(r"^\d{4}\.\d{1,2}\.\d{1,2}$", whatif.__version__), whatif.__version__
 
 
 def test_settings_france_eu_defaults():

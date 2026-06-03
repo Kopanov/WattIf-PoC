@@ -49,14 +49,22 @@ local LLM (**Ollama**) rephrases the *same locked facts*, re‑checked by a no�
 ## Quick start
 
 ```bash
+make install   # creates .venv and installs everything
+make run       # → http://localhost:8501
+```
+
+`make test` · `make api` · `make redteam` · `make help` for the rest. Prefer
+[**uv**](https://docs.astral.sh/uv/)? `uv venv && uv pip install -e ".[dev,ui,pv,data,semantics]"`,
+then `uv run streamlit run streamlit_app.py`. Plain pip works too:
+
+```bash
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,ui,pv,data,semantics]"
-streamlit run streamlit_app.py        # → http://localhost:8501
-pytest                                 # run the test suite
+streamlit run streamlit_app.py
 ```
 
 No keys needed. Optional: a local **Ollama** model enables the LLM‑phrased explanation; an Anthropic
-key (server‑side, via `.env`) is an alternative. Copy `.env.example` → `.env` only if you want those.
+key (server‑side, via `.env`) is an alternative.
 
 ## Architecture
 

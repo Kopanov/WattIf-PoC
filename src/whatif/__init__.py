@@ -6,5 +6,5 @@ import those lazily inside the functions that need them.
 """
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "2026.6.3"  # CalVer (YYYY.M.D)
 __all__ = ["__version__"]

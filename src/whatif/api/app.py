@@ -15,6 +15,8 @@ def create_app():
     from fastapi import FastAPI
     from pydantic import BaseModel
 
+    from whatif import __version__
+
     from whatif.adapters.data_open import EU_LOCATIONS, build_assets
     from whatif.adapters.publisher_saref import to_jsonld
     from whatif.core.catalogue import baseline_params, tariff_catalogue
@@ -23,7 +25,7 @@ def create_app():
 
     app = FastAPI(
         title="WattIf API (PoC)",
-        version="0.1.0",
+        version=__version__,
         description="Descriptive-only what-if engine for residential prosumers (ODEON Challenge 10).",
     )
 
