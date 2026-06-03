@@ -1,0 +1,8 @@
+# Consistent appearance for every evaluator (and on Replit / HF Spaces).
+[theme]
+base = "light"
+primaryColor = "#2c7fb8"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

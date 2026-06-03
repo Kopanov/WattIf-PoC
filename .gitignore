@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Virtualenv
+.venv/
+venv/
+
+# Secrets — never commit real keys
+.env
+
+# Data — commit only curated small samples under data/samples/
+data/*
+!data/samples/
+!data/samples/**
+
+# Generated scenario outputs (SAREF JSON-LD etc.)
+out/*
+!out/.gitkeep
+
+# Trained model artefacts
+models/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

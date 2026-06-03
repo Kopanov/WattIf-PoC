@@ -1,0 +1,10 @@
+run = "streamlit run streamlit_app.py --server.port 8080 --server.address 0.0.0.0 --server.headless true"
+language = "python3"
+entrypoint = "streamlit_app.py"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["streamlit", "run", "streamlit_app.py", "--server.port", "8080", "--server.address", "0.0.0.0", "--server.headless", "true"]
+deploymentTarget = "cloudrun"
