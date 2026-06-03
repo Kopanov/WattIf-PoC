@@ -1,10 +1,6 @@
 <div align="center">
 
-<img src="src/whatif/ui/assets/favicon.png" width="130" alt="WattIf logo" />
-
-# WattIf
-
-**energy what-if simulator**
+<img src="src/whatif/ui/assets/banner.png" alt="WattIf — energy what-if simulator" width="840" />
 
 See how solar, batteries, tariffs and an EV change your home's **energy cost, self-consumption and grid dependency** — clearly, and with **no advice**.
 
