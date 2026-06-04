@@ -9,3 +9,4 @@ folium>=0.16
 streamlit-folium>=0.20
 rdflib>=7.0
 python-dotenv>=1.0
+huggingface_hub>=0.24   # HF Inference backend for the hosted LLM-based answer

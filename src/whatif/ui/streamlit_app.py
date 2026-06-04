@@ -70,13 +70,18 @@ def _compute(location, annual_kwh, ev_kwh, pv_kwp, consumption_pct, ev, battery_
 
 
 @st.cache_data(show_spinner=False)
-def _llm_rephrase(template_text, model):
+def _llm_rephrase(template_text, backend, model):
     """Rephrase the grounded template with a local LLM, re-checked by the guardrail.
     Returns (text, status): status True = LLM used, False = blocked→fell back, None = unavailable."""
-    from whatif.adapters.llm_local import OllamaClient
     from whatif.core import explainer
     try:
-        draft = explainer.phrase_with_llm(template_text, OllamaClient(model=model))
+        if backend == "hf":
+            from whatif.adapters.llm_hf import HFInferenceClient
+            client = HFInferenceClient(model=model)
+        else:
+            from whatif.adapters.llm_local import OllamaClient
+            client = OllamaClient(model=model)
+        draft = explainer.phrase_with_llm(template_text, client)
         if draft and guardrail.check(draft).passed:
             return draft, True
         return template_text, False
@@ -473,12 +478,14 @@ exp_mode = st.segmented_control(
 
 narrative = R["narrative"]
 if exp_mode == "🧠 LLM-based":
+    import os
     from whatif.adapters.llm_local import list_models
-    _models = list_models()
-    if _models:
-        _model = _models[0]
+    from whatif.adapters.llm_hf import hf_available, DEFAULT_HF_MODEL
+    _local = list_models()
+    if _local:
+        _model = _local[0]
         with st.spinner(f"Rephrasing the same facts with {_model}…"):
-            narrative, status = _llm_rephrase(R["narrative"], _model)
+            narrative, status = _llm_rephrase(R["narrative"], "ollama", _model)
         if status is True:
             src = (f"**local LLM — `{_model}`** running on your machine (no data leaves it); "
                    "the guardrail re-checked the wording")
@@ -486,10 +493,20 @@ if exp_mode == "🧠 LLM-based":
             src = f"rule-based template — the `{_model}` draft was blocked by the guardrail, so we fell back"
         else:
             src = f"rule-based template — `{_model}` was unavailable, so we fell back"
+    elif hf_available():
+        _model = os.getenv("WHATIF_HF_MODEL", DEFAULT_HF_MODEL)
+        with st.spinner(f"Rephrasing the same facts with {_model} (HF Inference)…"):
+            narrative, status = _llm_rephrase(R["narrative"], "hf", _model)
+        if status is True:
+            src = f"**HF Inference — `{_model}`** (free serverless); the guardrail re-checked the wording"
+        elif status is False:
+            src = f"rule-based template — the `{_model}` draft was blocked by the guardrail, so we fell back"
+        else:
+            src = f"rule-based template — `{_model}` was rate-limited or unavailable, so we fell back"
     else:
-        src = "rule-based template — no local Ollama model found"
-        st.info("No local Ollama model detected — showing the rule-based answer. Start Ollama and "
-                "pull a model (e.g. `ollama pull llama3.1`) to enable the LLM answer.")
+        src = "rule-based template — no LLM backend available"
+        st.info("No LLM backend available. Locally, run Ollama (e.g. `ollama pull llama3.1`); "
+                "on the hosted demo, set an `HF_TOKEN` secret to enable the LLM answer.")
 else:
     src = "**rule-based** — a deterministic template that fills the computed facts into fixed slots"
 
