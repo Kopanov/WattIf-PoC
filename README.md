@@ -96,8 +96,8 @@ Runs unchanged on **Replit** or **Hugging Face Spaces** (both just run Streamlit
 PV data is cached and the explainer is local. Entry point: `streamlit_app.py`; dependencies in
 `requirements.txt`.
 
-## License & use
+## License
 
-**Source‑available** under the **[PolyForm Noncommercial License 1.0.0](LICENSE.md)** — free for any
-**noncommercial** use (evaluation, research, teaching, personal projects). **For commercial use,
-please open an issue or contact Core Ideas Ltd.** to arrange a licence.
+Licensed under the **[Apache License 2.0](LICENSE)**: free to use, modify and distribute, including commercially, provided you keep the attribution and license notice. Contributions welcome.
+
+WattIf, Copyright 2026 Core Ideas Ltd.
