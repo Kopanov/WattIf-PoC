@@ -11,12 +11,10 @@ from __future__ import annotations
 
 import os
 
-import folium
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
-from streamlit_folium import st_folium
 
 from whatif import __version__
 from whatif.adapters.data_open import EU_LOCATIONS, build_assets
@@ -320,33 +318,52 @@ with left:
         expanded=show_wt,
     )
 with right:
-    fmap = folium.Map(location=[R["location"]["lat"], R["location"]["lon"]],
-                      zoom_start=4, tiles="OpenStreetMap")
-    # Vector circle markers only (no external pin-image asset → nothing to break on load).
-    for name, lc in EU_LOCATIONS.items():
-        is_sel = name == location
-        folium.CircleMarker(
-            [lc["lat"], lc["lon"]],
-            radius=11 if is_sel else 7,
-            color="crimson" if is_sel else "#2c7fb8",
-            weight=2,
-            fill=True,
-            fill_color="crimson" if is_sel else "#41b6c4",
-            fill_opacity=0.9 if is_sel else 0.7,
-            tooltip=(f"{name} (selected)" if is_sel else f"{name} — click to select"),
-        ).add_to(fmap)
-    state = st_folium(fmap, height=360, use_container_width=True, key="osm",
-                      returned_objects=["last_clicked", "last_object_clicked"])
-    # A marker click registers as last_object_clicked; a background click as last_clicked.
-    click = (state or {}).get("last_object_clicked") or (state or {}).get("last_clicked")
-    if click and click.get("lat") is not None:
-        ckey = (round(float(click["lat"]), 4), round(float(click["lng"]), 4))
-        if st.session_state.get("_last_map_click") != ckey:  # only react to a NEW click
-            st.session_state["_last_map_click"] = ckey
-            nearest = min(EU_LOCATIONS, key=lambda n: (EU_LOCATIONS[n]["lat"] - click["lat"]) ** 2
-                          + (EU_LOCATIONS[n]["lon"] - click["lng"]) ** 2)
-            if nearest != st.session_state.location:
-                st.session_state.location = nearest
+    # Clickable map without a custom component: a native Plotly Scattergeo (no st_folium iframe
+    # that can render blank behind a cloud host). Click a city dot to pick it; it stays in two-way
+    # sync with the sidebar "Where do you live?" dropdown via st.session_state.location.
+    _names = list(EU_LOCATIONS.keys())
+    _fig_map = go.Figure(go.Scattergeo(
+        lon=[EU_LOCATIONS[n]["lon"] for n in _names],
+        lat=[EU_LOCATIONS[n]["lat"] for n in _names],
+        text=[n.split(",")[0] for n in _names],
+        customdata=_names,
+        mode="markers+text",
+        textposition="top center",
+        textfont=dict(size=11, color="#1f4e6b"),
+        marker=dict(
+            size=[20 if n == location else 12 for n in _names],
+            color=["crimson" if n == location else "#2c7fb8" for n in _names],
+            line=dict(width=1.5, color="white"),
+            opacity=0.95,
+        ),
+        hovertext=[f"{n} (selected)" if n == location else f"{n} (click to select)" for n in _names],
+        hoverinfo="text",
+    ))
+    _fig_map.update_geos(scope="europe", showcountries=True, countrycolor="#c7d2dd",
+                         showland=True, landcolor="#eef3f7", showocean=True, oceancolor="#dce9f2",
+                         showframe=False, coastlinecolor="#c7d2dd")
+    _fig_map.update_layout(height=360, margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
+    _event = st.plotly_chart(_fig_map, key="osm_map", on_select="rerun",
+                             selection_mode="points", config={"displayModeBar": False})
+    # Sync a NEW map click into the location (mirrors how the dropdown sets it).
+    try:
+        _pts = _event["selection"]["points"]
+    except Exception:
+        _pts = []
+    if _pts:
+        _p = _pts[0]
+        _cd = _p.get("customdata")
+        if isinstance(_cd, (list, tuple)) and _cd:
+            _picked = _cd[0]
+        elif isinstance(_cd, str):
+            _picked = _cd
+        else:
+            _idx = _p.get("point_index", _p.get("point_number"))
+            _picked = _names[_idx] if (_idx is not None and 0 <= _idx < len(_names)) else None
+        if _picked and st.session_state.get("_last_map_pick") != _picked:
+            st.session_state["_last_map_pick"] = _picked
+            if _picked != st.session_state.location:
+                st.session_state.location = _picked
                 st.rerun()
 
 st.divider()

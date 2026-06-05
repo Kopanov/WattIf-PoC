@@ -1,23 +1,11 @@
 # Runtime deps for the hosted Streamlit demo (Replit / Hugging Face Spaces).
-# The app runs from ./src via the root streamlit_app.py shim — no package install needed.
+# The app runs from ./src via the root streamlit_app.py shim; no package install needed.
 streamlit>=1.33
 plotly>=5.20
 pandas>=2.0
 numpy>=1.24
 requests>=2.31
-folium>=0.16
-streamlit-folium>=0.20
 rdflib>=7.0
 python-dotenv>=1.0
-huggingface_hub>=0.24   # HF Inference backend for the hosted LLM-based answer
-folium>=0.16
 huggingface_hub>=0.24
-numpy>=1.24
-pandas>=2.0
-plotly>=5.20
 pvlib>=0.10
-python-dotenv>=1.0
-rdflib>=7.0
-requests>=2.31
-streamlit>=1.33
-streamlit-folium>=0.20
