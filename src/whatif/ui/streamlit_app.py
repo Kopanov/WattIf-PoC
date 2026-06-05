@@ -325,19 +325,13 @@ with right:
             fill_opacity=0.9 if is_sel else 0.7,
             tooltip=(f"{name} (selected)" if is_sel else f"{name} — click to select"),
         ).add_to(fmap)
-    state = st_folium(fmap, height=360, use_container_width=True, key="osm",
-                      returned_objects=["last_clicked", "last_object_clicked"])
-    # A marker click registers as last_object_clicked; a background click as last_clicked.
-    click = (state or {}).get("last_object_clicked") or (state or {}).get("last_clicked")
-    if click and click.get("lat") is not None:
-        ckey = (round(float(click["lat"]), 4), round(float(click["lng"]), 4))
-        if st.session_state.get("_last_map_click") != ckey:  # only react to a NEW click
-            st.session_state["_last_map_click"] = ckey
-            nearest = min(EU_LOCATIONS, key=lambda n: (EU_LOCATIONS[n]["lat"] - click["lat"]) ** 2
-                          + (EU_LOCATIONS[n]["lon"] - click["lng"]) ** 2)
-            if nearest != st.session_state.location:
-                st.session_state.location = nearest
-                st.rerun()
+    # Static map embed: render the folium map as standalone HTML instead of the bidirectional
+    # st_folium component. st_folium round-trips data on every map interaction and re-renders on
+    # every rerun (each slider move, the LLM button, etc.), which drives rerun churn and memory
+    # pressure that can wedge a free CPU Space (white screen). Selecting a city is done with the
+    # sidebar Location selector; the map highlights the current choice.
+    import streamlit.components.v1 as _components
+    _components.html(fmap.get_root().render(), height=380)
 
 st.divider()
 
