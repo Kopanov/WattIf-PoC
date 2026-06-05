@@ -3,6 +3,7 @@
 base = "light"
 primaryColor = "#2c7fb8"
 font = "sans serif"
+textColor = "#31333F"
 
 [browser]
 gatherUsageStats = false
