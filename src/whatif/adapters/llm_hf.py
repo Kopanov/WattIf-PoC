@@ -16,7 +16,7 @@ from typing import Optional
 
 from whatif.adapters.base import LLMClient
 
-DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"
+DEFAULT_HF_MODEL = "Qwen/Qwen3-8B"  # text instruct, served; override via WHATIF_HF_MODEL
 
 
 def hf_token() -> str:
@@ -37,7 +37,9 @@ class HFInferenceClient(LLMClient):
     def complete(self, system: str, prompt: str, schema: Optional[dict] = None) -> str:
         from huggingface_hub import InferenceClient
 
-        client = InferenceClient(token=self.token or None)
+        # timeout so a slow/cold model call can never hang the Streamlit run (white screen);
+        # on timeout it raises, the caller catches it and falls back to the exact template.
+        client = InferenceClient(token=self.token or None, timeout=30)
         resp = client.chat_completion(
             model=self.model,
             messages=[
