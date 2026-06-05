@@ -159,13 +159,23 @@ def _profile_chart(fw, fb=None):
 st.markdown(
     "<style>"
     "@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;800&display=swap');"
-    ".wattif-eyebrow{font-family:'Rubik',sans-serif;font-weight:600;font-size:0.9rem;color:#2c7fb8;"
+    ".wattif-eyebrow{font-family:'Rubik',sans-serif;font-weight:600;"
+    "font-size:clamp(0.74rem,2.4vw,0.9rem);color:#2c7fb8;"
     "text-transform:uppercase;letter-spacing:2.5px;margin-bottom:4px;}"
-    ".wattif-wordmark{font-family:'Rubik',sans-serif;font-weight:800;font-size:4.4rem;color:#1f4e6b;"
-    "line-height:1.0;letter-spacing:-1.5px;margin:0;}"
+    ".wattif-wordmark{font-family:'Rubik',sans-serif;font-weight:800;"
+    "font-size:clamp(2.6rem,11vw,4.4rem);color:#1f4e6b;"
+    "line-height:1.0;letter-spacing:-1.5px;margin:0;overflow-wrap:break-word;}"
     ".wattif-wordmark .accent{color:#2c7fb8;}"
-    ".wattif-tagline{font-family:'Rubik',sans-serif;font-weight:500;font-size:1.06rem;color:#46586a;"
-    "margin-top:10px;max-width:36rem;}"
+    ".wattif-tagline{font-family:'Rubik',sans-serif;font-weight:500;"
+    "font-size:clamp(0.95rem,2.8vw,1.06rem);color:#46586a;"
+    "margin-top:10px;max-width:36rem;overflow-wrap:break-word;}"
+    # On phones / narrow panels, let fixed-height cards grow to fit their text "
+    # (no inner scrollbars) and stop the header illustration dominating the screen.
+    "@media (max-width:640px){"
+    "[data-testid='stVerticalBlockBorderWrapper']{height:auto !important;}"
+    "[data-testid='stVerticalBlockBorderWrapper'] > div{height:auto !important;overflow:visible !important;}"
+    "[data-testid='stImage']{max-width:200px;margin-left:auto;margin-right:auto;}"
+    "}"
     "</style>",
     unsafe_allow_html=True,
 )
