@@ -310,28 +310,30 @@ with left:
         expanded=show_wt,
     )
 with right:
-    fmap = folium.Map(location=[R["location"]["lat"], R["location"]["lon"]],
-                      zoom_start=4, tiles="OpenStreetMap")
-    # Vector circle markers only (no external pin-image asset → nothing to break on load).
-    for name, lc in EU_LOCATIONS.items():
-        is_sel = name == location
-        folium.CircleMarker(
-            [lc["lat"], lc["lon"]],
-            radius=11 if is_sel else 7,
-            color="crimson" if is_sel else "#2c7fb8",
-            weight=2,
-            fill=True,
-            fill_color="crimson" if is_sel else "#41b6c4",
-            fill_opacity=0.9 if is_sel else 0.7,
-            tooltip=(f"{name} (selected)" if is_sel else f"{name} — click to select"),
-        ).add_to(fmap)
-    # Static map embed: render the folium map as standalone HTML instead of the bidirectional
-    # st_folium component. st_folium round-trips data on every map interaction and re-renders on
-    # every rerun (each slider move, the LLM button, etc.), which drives rerun churn and memory
-    # pressure that can wedge a free CPU Space (white screen). Selecting a city is done with the
-    # sidebar Location selector; the map highlights the current choice.
     import streamlit.components.v1 as _components
-    _components.html(fmap.get_root().render(), height=380)
+
+    @st.cache_data(show_spinner=False)
+    def _map_html(selected_name):
+        m = folium.Map(location=[EU_LOCATIONS[selected_name]["lat"],
+                                 EU_LOCATIONS[selected_name]["lon"]],
+                       zoom_start=4, tiles="OpenStreetMap")
+        for nm, lc in EU_LOCATIONS.items():
+            sel = nm == selected_name
+            folium.CircleMarker(
+                [lc["lat"], lc["lon"]],
+                radius=11 if sel else 7,
+                color="crimson" if sel else "#2c7fb8",
+                weight=2, fill=True,
+                fill_color="crimson" if sel else "#41b6c4",
+                fill_opacity=0.9 if sel else 0.7,
+                tooltip=(nm + " (selected)") if sel else nm,
+            ).add_to(m)
+        return m.get_root().render()
+
+    # CACHED static map HTML: the heavy folium/leaflet HTML is rebuilt only when the selected
+    # city changes, not on every rerun, so reruns stay light on a free CPU Space. City
+    # selection is via the sidebar Location selector.
+    _components.html(_map_html(location), height=380)
 
 st.divider()
 
