@@ -16,7 +16,10 @@ from typing import Optional
 
 from whatif.adapters.base import LLMClient
 
-DEFAULT_HF_MODEL = "Qwen/Qwen3-8B"  # text instruct, served; override via WHATIF_HF_MODEL
+# Must be an *instruct* (non-reasoning) model served by the HF Inference API. Reasoning
+# models (e.g. Qwen3 / Qwen3.5) spend the whole token budget on hidden thinking and return
+# empty content here, which silently falls back to the template. Override via WHATIF_HF_MODEL.
+DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"
 
 
 def hf_token() -> str:
@@ -49,4 +52,13 @@ class HFInferenceClient(LLMClient):
             max_tokens=220,
             temperature=0.2,
         )
-        return resp.choices[0].message.content
+        choices = getattr(resp, "choices", None)
+        content = choices[0].message.content if choices else None
+        # Fail loudly instead of returning empty text: reasoning models / rate limits can
+        # yield no content, and a silent "" would make the LLM answer mirror the template.
+        if not content or not content.strip():
+            raise RuntimeError(
+                f"HF Inference returned empty content for model '{self.model}' "
+                "(it may be a reasoning model or rate-limited)."
+            )
+        return content

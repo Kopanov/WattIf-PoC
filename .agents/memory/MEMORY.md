@@ -1,0 +1,1 @@
+- [HF Inference reasoning models](hf-inference-reasoning-models.md) — reasoning models (Qwen3/3.5) return empty content on HF Inference; use an instruct model and fail loudly on empty.
