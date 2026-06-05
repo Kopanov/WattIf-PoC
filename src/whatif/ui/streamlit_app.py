@@ -310,19 +310,34 @@ with left:
         expanded=show_wt,
     )
 with right:
-    # Map removed from the hosted demo: re-embedding the leaflet iframe on every rerun was the
-    # payload the free Space websocket dropped (white screen on any interaction). City selection
-    # is via the sidebar Location selector; PV and prices update for the chosen city. A light
-    # static panel replaces the map so reruns carry a tiny delta.
-    _names = ", ".join(n.split(",")[0] for n in EU_LOCATIONS)
-    st.markdown(
-        "<div style='border:1px solid #e3e8ef;border-radius:10px;padding:18px 20px;"
-        "background:#f7f9fc'><div style='font-size:1.15rem'>\U0001F4CD <b>" + str(location) +
-        "</b></div><div style='color:#5b6b7b;margin-top:6px'>Available EU locations: " + _names +
-        ". Switch from the <b>Location</b> selector in the sidebar; the PV yield and prices update "
-        "for the chosen city.</div></div>",
-        unsafe_allow_html=True,
-    )
+    fmap = folium.Map(location=[R["location"]["lat"], R["location"]["lon"]],
+                      zoom_start=4, tiles="OpenStreetMap")
+    # Vector circle markers only (no external pin-image asset → nothing to break on load).
+    for name, lc in EU_LOCATIONS.items():
+        is_sel = name == location
+        folium.CircleMarker(
+            [lc["lat"], lc["lon"]],
+            radius=11 if is_sel else 7,
+            color="crimson" if is_sel else "#2c7fb8",
+            weight=2,
+            fill=True,
+            fill_color="crimson" if is_sel else "#41b6c4",
+            fill_opacity=0.9 if is_sel else 0.7,
+            tooltip=(f"{name} (selected)" if is_sel else f"{name} — click to select"),
+        ).add_to(fmap)
+    state = st_folium(fmap, height=360, use_container_width=True, key="osm",
+                      returned_objects=["last_clicked", "last_object_clicked"])
+    # A marker click registers as last_object_clicked; a background click as last_clicked.
+    click = (state or {}).get("last_object_clicked") or (state or {}).get("last_clicked")
+    if click and click.get("lat") is not None:
+        ckey = (round(float(click["lat"]), 4), round(float(click["lng"]), 4))
+        if st.session_state.get("_last_map_click") != ckey:  # only react to a NEW click
+            st.session_state["_last_map_click"] = ckey
+            nearest = min(EU_LOCATIONS, key=lambda n: (EU_LOCATIONS[n]["lat"] - click["lat"]) ** 2
+                          + (EU_LOCATIONS[n]["lon"] - click["lng"]) ** 2)
+            if nearest != st.session_state.location:
+                st.session_state.location = nearest
+                st.rerun()
 
 st.divider()
 
