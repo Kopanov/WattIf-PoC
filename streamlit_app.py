@@ -7,7 +7,11 @@ Adds ``src`` to the path and runs the real UI, so hosts that expect a top-level
 """
 import os
 import sys
+import runpy
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from whatif.ui import streamlit_app  # noqa: E402,F401  (importing runs the Streamlit app)
+runpy.run_path(
+    os.path.join(os.path.dirname(__file__), "src", "whatif", "ui", "streamlit_app.py"),
+    run_name="__main__",
+)
