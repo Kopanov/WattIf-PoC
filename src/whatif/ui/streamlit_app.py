@@ -197,7 +197,7 @@ _s1, _s2, _s3 = st.columns(3)
 with _s1:
     with st.container(border=True, height=270):
         st.markdown(
-            "**1 · 📥 Inputs — data & forecasts**\n\n"
+            "**1 · Inputs — data & forecasts**\n\n"
             "Your household profile + a PV forecast.\n\n"
             "*Today:* open EU data + real **PVGIS**.\n"
             "*Production:* **ODEON** data space + an **ODEON AI forecast** artefact.\n\n"
@@ -207,14 +207,14 @@ with _s1:
 with _s2:
     with st.container(border=True, height=270):
         st.markdown(
-            "**2 · 🧮 Deterministic engine — the exact core**\n\n"
+            "**2 · Deterministic engine — the exact core**\n\n"
             "Plain energy-balance maths computes the three indicators and attributes every change.\n\n"
             "**No model, no prediction** — reproducible by anyone."
         )
 with _s3:
     with st.container(border=True, height=270):
         st.markdown(
-            "**3 · 🗣️ Explanation — plain language**\n\n"
+            "**3 · Explanation — plain language**\n\n"
             "A grounded template says *what changed and why* (always on).\n\n"
             "Optionally a **local LLM** rephrases the *same locked facts* — re-checked by the "
             "no-advice guardrail."
@@ -239,7 +239,7 @@ st.warning(
     "demonstrated below (the explanation is checked by a no-advice guardrail).",
     icon="🛡️",
 )
-show_wt = st.toggle("📖 Show the full PoC walkthrough (expand every guide box)", value=True)
+show_wt = st.toggle("Show the full PoC walkthrough (expand every guide box)", value=True)
 
 with st.expander("🔌 How this plugs into ODEON (the three swap points)", expanded=show_wt):
     st.markdown(
@@ -370,7 +370,7 @@ st.divider()
 
 # --------------------------------------------------------------------------- indicator cards
 
-st.subheader("📊 The three indicators (based on sample open-source data)")
+st.subheader("The three indicators (based on sample open-source data)")
 b, w, d = R["base_ind"], R["wi_ind"], R["deltas"]
 m1, m2, m3 = st.columns(3)
 m1.metric("Energy cost", f"{_money(w.energy_cost, cur)}/yr",
@@ -397,7 +397,7 @@ st.divider()
 
 # --------------------------------------------------------------------------- profile chart
 
-st.subheader("🔌 Energy profile — baseline vs what-if")
+st.subheader("Energy profile — baseline vs what-if")
 _WEATHER_OPT = "🌤️ Next 7 days (live weather)"
 win = st.segmented_control("Chart window",
                            list(_WINDOWS.keys()) + ["Full year (daily)", _WEATHER_OPT],
@@ -448,7 +448,7 @@ st.divider()
 
 # --------------------------------------------------------------------------- attribution waterfall
 
-st.subheader("🧩 What drove the change? (exact attribution)")
+st.subheader("What drove the change? (exact attribution)")
 ind_key = st.segmented_control("Indicator", list(INDICATOR_LABELS.keys()),
                                format_func=lambda k: INDICATOR_LABELS[k],
                                default="energy_cost", selection_mode="single",
@@ -496,7 +496,7 @@ st.divider()
 
 # --------------------------------------------------------------------------- narrative + audit
 
-st.subheader("📝 Plain-language explanation")
+st.subheader("Plain-language explanation")
 st.caption("Both answers describe the **same computed facts** — pick how they are worded.")
 exp_mode = st.segmented_control(
     "Answer style", ["📐 Rule-based", "🧠 LLM-based"],
@@ -572,7 +572,7 @@ st.divider()
 
 # --------------------------------------------------------------------------- SAREF export
 
-st.subheader("🧾 Export — SAREF / IEC-CIM JSON-LD")
+st.subheader("Export — SAREF / IEC-CIM JSON-LD")
 import json as _json
 
 doc = R["saref"]
@@ -599,13 +599,13 @@ st.divider()
 
 # --------------------------------------------------------------------------- roadmap
 
-st.subheader("🚀 Roadmap — from this PoC to ODEON")
+st.subheader("Roadmap — from this PoC to ODEON")
 st.caption("What today's demo proves, what the funded project adds, and how it fits ODEON.")
 _r1, _r2, _r3 = st.columns(3)
 with _r1:
     with st.container(border=True, height=330):
         st.markdown(
-            "**✅ This PoC demonstrates**\n\n"
+            "**This PoC demonstrates**\n\n"
             "- Exact, **reproducible** indicators + exact attribution\n"
             "- Provably **descriptive** explanation (rule-based + optional local LLM) with a "
             "no-advice guardrail\n"
@@ -615,7 +615,7 @@ with _r1:
 with _r2:
     with st.container(border=True, height=330):
         st.markdown(
-            "**🔜 The funded project adds**\n\n"
+            "**The funded project adds**\n\n"
             "- A **trained profile feeder** (gradient-boosted trees) + a *generated-beats-scaled* "
             "realism benchmark\n"
             "- Real **ODEON integration**: Energy Data Space data, PV/load forecasts from **ODEON "
@@ -626,7 +626,7 @@ with _r2:
 with _r3:
     with st.container(border=True, height=330):
         st.markdown(
-            "**🧩 Aligned with ODEON requirements**\n\n"
+            "**Aligned with ODEON requirements**\n\n"
             "- **API-centric**: three swappable adapters, no platform duplication\n"
             "- Speaks the ODEON **Semantic Data Model** (SAREF / IEC CIM)\n"
             "- **Descriptive-only** — complements, doesn't overlap, ODEON's prosumer services\n"
