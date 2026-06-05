@@ -1,7 +1,7 @@
 # Runtime deps for the hosted Streamlit demo (Replit / Hugging Face Spaces).
 # The app runs from ./src via the root streamlit_app.py shim; no package install needed.
 streamlit>=1.33
-plotly>=5.20
+plotly>=5.24
 pandas>=2.0
 numpy>=1.24
 requests>=2.31

@@ -318,31 +318,30 @@ with left:
         expanded=show_wt,
     )
 with right:
-    # Clickable map without a custom component: a native Plotly Scattergeo (no st_folium iframe
-    # that can render blank behind a cloud host). Click a city dot to pick it; it stays in two-way
-    # sync with the sidebar "Where do you live?" dropdown via st.session_state.location.
+    # Clickable map without a custom component: a native Plotly map on OpenStreetMap tiles (no
+    # st_folium iframe that can render blank behind a cloud host). Click a city dot to pick it;
+    # it stays in two-way sync with the sidebar "Where do you live?" dropdown via session state.
     _names = list(EU_LOCATIONS.keys())
-    _fig_map = go.Figure(go.Scattergeo(
+    _fig_map = go.Figure(go.Scattermap(
         lon=[EU_LOCATIONS[n]["lon"] for n in _names],
         lat=[EU_LOCATIONS[n]["lat"] for n in _names],
         text=[n.split(",")[0] for n in _names],
         customdata=_names,
         mode="markers+text",
-        textposition="top center",
-        textfont=dict(size=11, color="#1f4e6b"),
+        textposition="top right",
+        textfont=dict(size=12, color="#10324a"),
         marker=dict(
-            size=[20 if n == location else 12 for n in _names],
+            size=[20 if n == location else 13 for n in _names],
             color=["crimson" if n == location else "#2c7fb8" for n in _names],
-            line=dict(width=1.5, color="white"),
-            opacity=0.95,
         ),
         hovertext=[f"{n} (selected)" if n == location else f"{n} (click to select)" for n in _names],
         hoverinfo="text",
     ))
-    _fig_map.update_geos(scope="europe", showcountries=True, countrycolor="#c7d2dd",
-                         showland=True, landcolor="#eef3f7", showocean=True, oceancolor="#dce9f2",
-                         showframe=False, coastlinecolor="#c7d2dd")
-    _fig_map.update_layout(height=360, margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
+    # Centre on Europe at a zoom that frames all the EU example cities (Dublin to Athens).
+    _fig_map.update_layout(
+        map=dict(style="open-street-map", center=dict(lat=48, lon=9), zoom=3.4),
+        height=380, margin=dict(l=0, r=0, t=0, b=0), showlegend=False,
+    )
     _event = st.plotly_chart(_fig_map, key="osm_map", on_select="rerun",
                              selection_mode="points", config={"displayModeBar": False})
     # Sync a NEW map click into the location (mirrors how the dropdown sets it).
