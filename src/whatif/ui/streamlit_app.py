@@ -310,30 +310,19 @@ with left:
         expanded=show_wt,
     )
 with right:
-    import streamlit.components.v1 as _components
-
-    @st.cache_data(show_spinner=False)
-    def _map_html(selected_name):
-        m = folium.Map(location=[EU_LOCATIONS[selected_name]["lat"],
-                                 EU_LOCATIONS[selected_name]["lon"]],
-                       zoom_start=4, tiles="OpenStreetMap")
-        for nm, lc in EU_LOCATIONS.items():
-            sel = nm == selected_name
-            folium.CircleMarker(
-                [lc["lat"], lc["lon"]],
-                radius=11 if sel else 7,
-                color="crimson" if sel else "#2c7fb8",
-                weight=2, fill=True,
-                fill_color="crimson" if sel else "#41b6c4",
-                fill_opacity=0.9 if sel else 0.7,
-                tooltip=(nm + " (selected)") if sel else nm,
-            ).add_to(m)
-        return m.get_root().render()
-
-    # CACHED static map HTML: the heavy folium/leaflet HTML is rebuilt only when the selected
-    # city changes, not on every rerun, so reruns stay light on a free CPU Space. City
-    # selection is via the sidebar Location selector.
-    _components.html(_map_html(location), height=380)
+    # Map removed from the hosted demo: re-embedding the leaflet iframe on every rerun was the
+    # payload the free Space websocket dropped (white screen on any interaction). City selection
+    # is via the sidebar Location selector; PV and prices update for the chosen city. A light
+    # static panel replaces the map so reruns carry a tiny delta.
+    _names = ", ".join(n.split(",")[0] for n in EU_LOCATIONS)
+    st.markdown(
+        "<div style='border:1px solid #e3e8ef;border-radius:10px;padding:18px 20px;"
+        "background:#f7f9fc'><div style='font-size:1.15rem'>\U0001F4CD <b>" + str(location) +
+        "</b></div><div style='color:#5b6b7b;margin-top:6px'>Available EU locations: " + _names +
+        ". Switch from the <b>Location</b> selector in the sidebar; the PV yield and prices update "
+        "for the chosen city.</div></div>",
+        unsafe_allow_html=True,
+    )
 
 st.divider()
 
