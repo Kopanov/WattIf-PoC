@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "whatif-demo"
-version = "2026.6.3"   # CalVer (YYYY.M.D) — keep in sync with src/whatif/__init__.py
+version = "2026.6.5"   # CalVer (YYYY.M.D) — keep in sync with src/whatif/__init__.py
 description = "WattIf — descriptive-only what-if scenario simulator for residential prosumers (ODEON Open Call #1, Challenge 10 PoC)"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -26,7 +26,7 @@ gen = ["sdv>=1.9"]                                            # M5 generative op
 llm = ["ollama>=0.3"]                                         # M4 local explainer
 semantics = ["rdflib>=7.0", "pyshacl>=0.25"]                 # M6 SAREF JSON-LD
 api = ["fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2.6"]   # M8 API
-ui = ["streamlit>=1.33", "plotly>=5.20"]                      # UI
+ui = ["streamlit>=1.49", "plotly>=5.20"]                      # UI (>=1.49 for width="stretch")
 dev = ["pytest>=8.0", "ruff>=0.4"]
 
 [tool.setuptools.packages.find]

@@ -190,7 +190,7 @@ with _hl:
     )
 with _hr:
     if os.path.exists(HOUSE_PATH):
-        st.image(HOUSE_PATH, use_container_width=True)
+        st.image(HOUSE_PATH, width="stretch")
 st.caption("ODEON Open Call #1, Challenge 10 — *Improving Prosumer Understanding Through What-If "
            "Scenario Analysis* · Proof of Concept by Core Ideas Ltd.")
 
@@ -404,7 +404,7 @@ if "live weather" in str(win).lower():  # emoji-agnostic match (survives session
         _w1.metric("This week — cost", _money(_wi.energy_cost, cur))
         _w2.metric("This week — self-consumption", f"{_wi.self_consumption * 100:.0f}%")
         _w3.metric("This week — grid dependency", f"{_wi.grid_dependency * 100:.0f}%")
-        st.plotly_chart(_profile_chart(fc["flows"]), use_container_width=True)
+        st.plotly_chart(_profile_chart(fc["flows"]), width="stretch")
 else:
     def _slice(df):
         if win == "Full year (daily)":
@@ -417,7 +417,7 @@ else:
         return df.loc[start:end]
 
     st.plotly_chart(_profile_chart(_slice(R["flows_wi"]), _slice(R["flows_base"])),
-                    use_container_width=True)
+                    width="stretch")
 guide(
     "The same household, **baseline (dotted)** vs **what-if (solid)**. Load is blue, PV is orange, "
     "the red shaded area is what you still draw from the grid, and the green dashed line is the "
@@ -465,7 +465,7 @@ else:
                    annotation_text=f"net {_fmt(total)}", annotation_position="top left")
     fig2.update_layout(height=380, margin=dict(l=10, r=10, t=30, b=10), showlegend=False,
                        yaxis_title=("Cost change (" + cur + ")") if is_cost else "Change (pts)")
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width="stretch")
 guide(
     "Because the engine is an **exact function**, attribution is exact too — no SHAP, no "
     "approximation. We step from the baseline to your what-if **one change at a time** and record "
